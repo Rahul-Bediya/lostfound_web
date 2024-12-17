@@ -10,7 +10,7 @@
 
 // module.exports = router;
 const express = require('express');
-const { registerUser, loginUser, logoutUser, getUser } = require('../controllers/usercontroller');
+const { registerUser, loginUser, logoutUser, getUser } = require('../controllers/userController');
 const auth = require('../middleware/auth');
 
 const router = express.Router();

@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/users/me');
+      const res = await axios.get('http://localhost:5000/api/users/me');
       setUser(res.data);
     } catch (err) {
       console.error(err);
@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      await axios.post('http://localhost:3000/api/users/register', { name, email, password });
+      await axios.post('http://localhost:5000/api/users/register', { name, email, password });
       alert('Registration successful, please log in.');
       navigate('/login');
     } catch (err) {
@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/users/login', { email, password });
+      const res = await axios.post('http://localhost:5000/api/users/login', { email, password });
       setToken(res.data.token);
       localStorage.setItem('token', res.data.token);
       navigate('/');
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:3000/api/users/logout');
+      await axios.post('http://localhost:5000/api/users/logout');
       setToken(null);
       setUser(null);
       localStorage.removeItem('token');

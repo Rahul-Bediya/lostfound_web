@@ -2,47 +2,43 @@
 
 
 
+
 // import React, { useState, useContext } from 'react';
 // import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 // import { AuthContext } from '../context/AuthContext';
 
 // const PostItem = () => {
-//   const { user, loading } = useContext(AuthContext);
+//   const { user } = useContext(AuthContext);
 //   const [formData, setFormData] = useState({
 //     title: '',
 //     description: '',
 //     category: 'Lost',
 //     location: '',
 //     image: null,
-//     user:''
 //   });
 
 //   const navigate = useNavigate();
 
 //   const { title, description, category, location, image } = formData;
 
-//   const onChange = e => {
+//   const onChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
 //   };
 
-//   const onFileChange = e => {
+//   const onFileChange = (e) => {
 //     setFormData({ ...formData, image: e.target.files[0] });
 //   };
 
-//   const onSubmit = async e => {
+//   const onSubmit = async (e) => {
 //     e.preventDefault();
-
-//     if (!user) {
-//       console.error('User not authenticated');
-//       return;
-//     }
 
 //     try {
 //       const config = {
 //         headers: {
-//           'Content-Type': 'multipart/form-data'
-//         }
+//           'Content-Type': 'multipart/form-data',
+//           Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token
+//         },
 //       };
 
 //       const formDataWithImage = new FormData();
@@ -51,32 +47,27 @@
 //       formDataWithImage.append('category', category);
 //       formDataWithImage.append('location', location);
 //       formDataWithImage.append('image', image);
-//       formDataWithImage.append('user', user._id); // Ensure user._id is available
+//       formDataWithImage.append('userId', user._id); // Include user ID in the request body
+
+//       console.log('User ID:', user._id); // Log user ID before sending request
 
 //       const res = await axios.post('http://localhost:5000/api/items/post', formDataWithImage, config);
 
 //       console.log(res.data);
-//       console.log(user._id)
 
-//       // Reset form data to initial state
 //       setFormData({
 //         title: '',
 //         description: '',
 //         category: 'Lost',
 //         location: '',
-//         image: null
+//         image: null,
 //       });
 
-//       // Redirect to home page or any other route
 //       navigate('/');
 //     } catch (err) {
 //       console.error(err.response.data);
 //     }
 //   };
-
-//   if (loading) {
-//     return <p>Loading...</p>;
-//   }
 
 //   return (
 //     <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8">
@@ -157,8 +148,6 @@
 // export default PostItem;
 
 
-
-
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -173,7 +162,7 @@ const PostItem = () => {
     location: '',
     image: null,
   });
-
+  const [notification, setNotification] = useState(null); // State to manage notification
   const navigate = useNavigate();
 
   const { title, description, category, location, image } = formData;
@@ -184,6 +173,11 @@ const PostItem = () => {
 
   const onFileChange = (e) => {
     setFormData({ ...formData, image: e.target.files[0] });
+  };
+
+  const sendNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 5000); // Hide after 5 seconds
   };
 
   const onSubmit = async (e) => {
@@ -207,9 +201,12 @@ const PostItem = () => {
 
       console.log('User ID:', user._id); // Log user ID before sending request
 
-      const res = await axios.post('http://localhost:3000/api/items/post', formDataWithImage, config);
+      const res = await axios.post('http://localhost:5000/api/items/post', formDataWithImage, config);
 
       console.log(res.data);
+
+      // Trigger notification after successful post
+      sendNotification('Item posted successfully!');
 
       setFormData({
         title: '',
@@ -222,12 +219,21 @@ const PostItem = () => {
       navigate('/');
     } catch (err) {
       console.error(err.response.data);
+      sendNotification('Error posting item. Please try again.');
     }
   };
 
   return (
     <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold mb-4 text-center">Post Lost/Found Item</h2>
+
+      {/* Notification display */}
+      {notification && (
+        <div className="mb-4 p-4 bg-green-500 text-white text-center rounded-md">
+          {notification}
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">Title:</label>
